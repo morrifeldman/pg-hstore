@@ -74,7 +74,7 @@
 (extend-type org.postgresql.util.PGobject
   FHstorable
   (from-hstore
-    ([this] (from-hstore this false))
+    ([this] (from-hstore this true))
     ([this symbolize-keys?]
      (when (= (.getType this) "hstore")
        (from-hstore-to-map (.getValue this) symbolize-keys?)))))
