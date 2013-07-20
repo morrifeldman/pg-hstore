@@ -7,7 +7,7 @@ A Clojure library designed to transform clojure maps to PostgreSQL hstore object
 Add pg-hstore to your project.clj file in leiningen:
 
 ```clj
-    [pg-hstore "2.0.0"]
+    [pg-hstore "2.0.1"]
 ```
 
 ## Usage
@@ -19,7 +19,7 @@ Once installed, you can use it like so:
     user> (def h (to-hstore {:color "blue" :size "small"}))
     #'user/h
     user> h
-    #<PGobject E'"size"=>"small","color"=>"blue"'>
+    #<PGobject "size"=>"small","color"=>"blue">
     user> (from-hstore h)
     {:color "blue", :size "small"}
     user>

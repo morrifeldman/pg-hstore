@@ -10,20 +10,15 @@
              :user (st/trim (:out (clojure.java.shell/sh "whoami")))})
 
 (defmacro data-transform-tester [d]
-  `(let [[n# m# encoded# string-constant#] ~d]
+  `(let [[n# m# encoded#] ~d]
      (fact n# (to-hstore m# true) => encoded#)
-     (fact n# (.getValue (to-hstore m#)) => string-constant#)))
+     (fact n# (.getValue (to-hstore m#)) => encoded#)))
 
 (defmacro data-integration-tester [db d]
-  `(let [[n# m# encoded# string-constant#] ~d
-         prepared-sql# "SELECT ?::hstore AS hstore"
-         concat-sql# (str "SELECT " string-constant# "::hstore AS hstore")]
+  `(let [[n# m# encoded#] ~d
+         prepared-sql# "SELECT ?::hstore AS hstore"]
      (fact "test load prepared string"
-       (let [ret# (.getValue (:hstore (first (j/query ~db [prepared-sql# encoded#]))))]
-         ret# => (st/replace encoded# "," ", ")
-         (from-hstore ret#) => m#))
-     (fact "test load concatted string"
-       (let [ret# (.getValue (:hstore (first (j/query ~db [concat-sql#]))))]
+       (let [ret# (.getValue (:hstore (first (j/query ~db [prepared-sql# (to-hstore m#)]))))]
          ret# => (st/replace encoded# "," ", ")
          (from-hstore ret#) => m#))))
 
@@ -35,15 +30,11 @@
          data# => ~n))))
 
 (defmacro nasty-integration-tester [db n]
-  `(let [prepared-sql# "SELECT ?::hstore AS hstore"
-         concat-sql# (str "SELECT " (to-hstore ~n) "::hstore AS hstore")]
+  `(let [prepared-sql# "SELECT ?::hstore AS hstore"]
      (fact "test load prepared string"
        (from-hstore (:hstore
                       (first (j/query ~db [prepared-sql#
-                                           (to-hstore ~n true)]))) true) => ~n)
-     (fact "test load concatted string"
-       (from-hstore (:hstore
-                      (first (j/query ~db [concat-sql#]))) true) => ~n)))
+                                           (to-hstore ~n true)]))) true) => ~n)))
 
 (facts "hstore from maps"
   (fact "should set a value correctly"
@@ -59,35 +50,29 @@
              :user (st/trim (:out (clojure.java.shell/sh "whoami")))}]
     (j/db-do-commands db "CREATE EXTENSION IF NOT EXISTS hstore")
     (j/db-do-commands db "SET standard_conforming_strings=on")
-    (let [data [["should translate into a sequel literal"
+    (let [data [["should translate into an SQL literal"
                  {:a "b", :foo "bar"}
                  "\"a\"=>\"b\",\"foo\"=>\"bar\""
-                 "E'\"a\"=>\"b\",\"foo\"=>\"bar\"'"
                  ]
                 ["should store an empty string"
                  {:nothing ""}
                  "\"nothing\"=>\"\""
-                 "E'\"nothing\"=>\"\"'"
                  ]
                 ["should render nil as NULL"
                  {:x nil}
                  "\"x\"=>NULL"
-                 "E'\"x\"=>NULL'"
                  ]
                 ["should support single quotes in strings"
                  {:journey "don't stop believin'"}
                  "\"journey\"=>\"don't stop believin'\""
-                 "E'\"journey\"=>\"don\\'t stop believin\\'\"'"
                  ]
                 ["should support double quotes in strings"
                  {:journey "He said he was \"ready\""}
                  "\"journey\"=>\"He said he was \\\"ready\\\"\""
-                 "E'\"journey\"=>\"He said he was \\\\\"ready\\\\\"\"'"
                  ]
                 ["should escape \\ garbage in strings",
                  {:line_noise "perl -p -e 's/\\$\\{([^}]+\\}/]"}
                  "\"line_noise\"=>\"perl -p -e 's/\\\\$\\\\{([^}]+\\\\}/]\""
-                 "E'\"line_noise\"=>\"perl -p -e \\'s/\\\\\\\\$\\\\\\\\{([^}]+\\\\\\\\}/]\"'"
                  ]]
           nasty [{:journey "He said he was ready"}
                  {:a "\\"}

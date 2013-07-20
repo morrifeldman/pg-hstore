@@ -42,13 +42,6 @@
         v (if (nil? v) null-string (escape-nonnull-for-hstore v))]
     (st/join hashrocket [k v])))
 
-(defn- as-postgresql-string-constant [s]
-  (str e-single-quote
-       (-> s
-           (st/replace slash escaped-slash)
-           (st/replace single-quote escaped-single-quote))
-       single-quote))
-
 (defn- s-unquote [s quote-char]
   (let [s (or (last (re-find e-single-quote-stripper s)) s)]
     (if (.startsWith s quote-char)
@@ -98,5 +91,5 @@
          (doto (PGobject.)
            (.setType "hstore")
            (.setValue
-             (as-postgresql-string-constant hstore))))))))
+             hstore)))))))
 

@@ -1,4 +1,4 @@
-(defproject pg-hstore "2.0.0"
+(defproject pg-hstore "2.0.1"
   :description "A Clojure library designed to transform clojure maps to PostgreSQL hstore objects"
   :url "https://github.com/learningegg/pg-hstore"
   :license {:name "The BSD 3-Clause License"
