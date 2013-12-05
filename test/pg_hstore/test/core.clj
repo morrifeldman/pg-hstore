@@ -2,7 +2,7 @@
   (:require [pg-hstore.core :refer :all]
             [clojure.string :as st]
             [clojure.java.jdbc :as j]
-            [clojure.java.jdbc.sql :as s]
+            [java-jdbc.sql :as s]
             [midje.sweet :refer :all]))
 
 (defonce db {:subprotocol "postgresql"
@@ -18,8 +18,7 @@
   `(let [[n# m# encoded#] ~d
          prepared-sql# "SELECT ?::hstore AS hstore"]
      (fact "test load prepared string"
-       (let [ret# (.getValue (:hstore (first (j/query ~db [prepared-sql# (to-hstore m#)]))))]
-         ret# => (st/replace encoded# "," ", ")
+       (let [ret# (:hstore (first (j/query ~db [prepared-sql# (to-hstore m#)])))]
          (from-hstore ret#) => m#))))
 
 (defmacro nasty-transform-tester [n]

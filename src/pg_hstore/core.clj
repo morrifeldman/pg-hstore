@@ -79,6 +79,15 @@
     ([this symbolize-keys?]
      (from-hstore-to-map this symbolize-keys?))))
 
+(extend-type java.util.HashMap
+  FHstorable
+  (from-hstore
+    ([this] (from-hstore this true))
+    ([this symbolize-keys?]
+     (if symbolize-keys?
+       (into {} (for [[k v] this] [(keyword k) v]))
+       this))))
+
 (extend-type clojure.lang.IPersistentMap
   THstorable
   (to-hstore
