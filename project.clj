@@ -11,4 +11,8 @@
                                 [java-jdbc/dsl "0.1.0"]
                                 [org.clojure/tools.namespace "0.2.4"]
                                 [org.clojure/java.classpath "0.2.0"]]}}
+  :repositories [["clojars" "https://clojars.org/pg-hstore"]]
+  :deploy-repositories [["clojars" {:url "https://clojars.org/pg-hstore"
+                                    :creds :gpg
+                                    :signing {:gpg-key "support@learningegg.com"}}]]
   :repl-options {:init-ns user})
