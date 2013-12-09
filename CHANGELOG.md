@@ -1,3 +1,11 @@
+## 3.0.2
+
+- trying to get clojars deployment to work
+
+## 3.0.1
+
+- trying to get clojars deployment to work
+
 ## 3.0.0
 
 - adding extension for java.util.HashMap
