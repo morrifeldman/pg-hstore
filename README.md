@@ -7,7 +7,7 @@ A Clojure library designed to transform clojure maps to PostgreSQL hstore object
 Add pg-hstore to your project.clj file in leiningen:
 
 ```clj
-    [pg-hstore "3.0.1"]
+    [pg-hstore "3.0.3"]
 ```
 
 ## Usage

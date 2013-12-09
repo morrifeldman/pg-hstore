@@ -1,3 +1,7 @@
+## 3.0.3
+
+- trying to get clojars deployment to work
+
 ## 3.0.2
 
 - trying to get clojars deployment to work
