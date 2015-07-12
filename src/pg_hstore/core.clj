@@ -44,9 +44,9 @@
 
 (defn- s-unquote [s quote-char]
   (let [s (or (last (re-find e-single-quote-stripper s)) s)]
-    (if (.startsWith s quote-char)
-      (let [sl (.length s)
-            l (.length quote-char)]
+    (if (.startsWith ^java.lang.String s quote-char)
+      (let [sl (.length ^java.lang.String s)
+            l (.length ^java.lang.String quote-char)]
         (subs s l (- sl l)))
       s)))
 
